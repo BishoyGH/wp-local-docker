@@ -1,10 +1,6 @@
-# WordPress Local Development
-
-version: '3.8'
-
 services:
   database:
-    image: mariadb
+    image: mariadb:latest
     restart: unless-stopped
     ports:
       - 3306:3306
@@ -18,24 +14,19 @@ services:
       - ${MYSQL_LOCAL_HOME}:/var/lib/mysql
     networks:
       - wordpress
-    deploy:
-      resources:
-        limits:
-          memory: 2048m
 
   wordpress:
     depends_on:
       - database
-    image: wordpress
+    image: wordpress:php8.3-fpm-alpine
     restart: unless-stopped
-    ports:
-      - 8080:80
     env_file: .env
     environment:
       WORDPRESS_DB_HOST: '${WORDPRESS_DB_HOST}'
       WORDPRESS_DB_NAME: '${WORDPRESS_DB_NAME}'
       WORDPRESS_DB_USER: '${WORDPRESS_DB_USER}'
       WORDPRESS_DB_PASSWORD: '${WORDPRESS_DB_PASSWORD}'
+      WORDPRESS_TABLE_PREFIX: '${WORDPRESS_TABLE_PREFIX}'
     volumes:
       - ${WORDPRESS_LOCAL_HOME}:/var/www/html
       - ${WORDPRESS_UPLOADS_CONFIG}:/usr/local/etc/php/conf.d/uploads.ini
@@ -45,12 +36,12 @@ services:
   nginx:
     depends_on:
       - wordpress
-    image: nginx
+    image: nginx:latest
     container_name: wp-nginx
     env_file: .env
     restart: unless-stopped
     ports:
-      - '80:80' # http
+      - 80:80
     volumes:
       - ${WORDPRESS_LOCAL_HOME}:/var/www/html
       - ${NGINX_CONF}:/etc/nginx/conf.d/default.conf
@@ -61,7 +52,7 @@ services:
   phpmyadmin:
     depends_on:
       - database
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:latest
     restart: unless-stopped
     ports:
       - 8081:80
