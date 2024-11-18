@@ -27,6 +27,7 @@ services:
       WORDPRESS_DB_USER: '${WORDPRESS_DB_USER}'
       WORDPRESS_DB_PASSWORD: '${WORDPRESS_DB_PASSWORD}'
       WORDPRESS_TABLE_PREFIX: '${WORDPRESS_TABLE_PREFIX}'
+      WORDPRESS_DEBUG: 1
     volumes:
       - ${WORDPRESS_LOCAL_HOME}:/var/www/html
       - ${WORDPRESS_UPLOADS_CONFIG}:/usr/local/etc/php/conf.d/uploads.ini
